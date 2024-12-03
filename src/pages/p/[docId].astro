@@ -1,0 +1,44 @@
+---
+import type { GetStaticPaths } from "astro";
+import {
+  listFileIdsInDriveFolder,
+  getHtmlForDriveDoc,
+} from "@/lib/google_drive";
+import { parseGoogleDocHtml } from "@/lib/google_doc_html_parser";
+import { CONFIG } from "@/app_config";
+import Layout from "../_layout.astro";
+
+/**
+ * This is how we statically generate the paths for the pages.
+ */
+export const getStaticPaths = (async () => {
+  // get the file ids in the post folder
+  const fileIds = await listFileIdsInDriveFolder(
+    CONFIG.google_drive_posts_folder_config
+  );
+
+  // map the file ids to the params object required by the page
+  return fileIds.map((fileId) => ({
+    params: { docId: fileId },
+  }));
+}) satisfies GetStaticPaths;
+
+/**
+ * Get the params
+ */
+const { docId } = Astro.params;
+
+// get the html for the doc
+const { htmlStr } = await getHtmlForDriveDoc(docId);
+
+//
+const { styleHtml, innerBodyHtml } = await parseGoogleDocHtml(htmlStr);
+---
+
+<Layout>
+  <!-- insert body -->
+  <main set:html={innerBodyHtml} class:list={["max-w-3xl", "mx-auto"]} />
+</Layout>
+
+<!-- insert styles -->
+<Fragment set:html={styleHtml} />
