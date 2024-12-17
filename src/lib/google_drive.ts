@@ -2,6 +2,9 @@ import { google } from "googleapis";
 import path from "node:path";
 import fs from "node:fs/promises";
 import JSZip from "jszip";
+import * as cheerio from "cheerio";
+import { db } from "../db";
+import { postsTable, SelectPost } from "@/schema";
 
 const SCOPES = ["https://www.googleapis.com/auth/drive.readonly"];
 const CREDENTIALS_PATH = path.join(
@@ -29,21 +32,20 @@ const getDriveService = async () => {
  *
  *************************************************************************************************************/
 export const listFileIdsInDriveFolder = async (folderId: string) => {
-  const drive = await getDriveService();
-
-  // Get all files in the folder
-  const res = await drive.files.list({
-    q: `'${folderId}' in parents`,
-    fields: "files(id, name)",
-    supportsAllDrives: true,
-    includeItemsFromAllDrives: true,
-  });
-
-  const files = res.data.files || [];
-
-  console.log("Files:", files);
+  const files = await getFilesInDriveFolder(folderId);
 
   const fileIds = files.map((f) => f.id).filter((id): id is string => !!id);
+
+  // add any files that aren't in our db, to our db
+  // first select all posts
+  const posts = await db.select().from(postsTable);
+  const existingIds = posts.map((post) => post.documentId);
+
+  // get a list of all fileIds that are not currently in postsTable.documentId
+  const newFileIds = fileIds.filter((id) => !existingIds.includes(id));
+
+  // call function to insert new fileIds into table
+  await insertPosts(newFileIds);
 
   return fileIds;
 
@@ -63,6 +65,22 @@ export const listFileIdsInDriveFolder = async (folderId: string) => {
   // }
 };
 
+export const getFilesInDriveFolder = async (folderId: string) => {
+  const drive = await getDriveService();
+
+  // get all files in the folder
+  const res = await drive.files.list({
+    q: `'${folderId}' in parents`,
+    fields: "files(id, name)",
+    supportsAllDrives: true,
+    includeItemsFromAllDrives: true,
+  });
+
+  const files = res.data.files || [];
+
+  return files;
+};
+
 /**************************************************************************************************************
  *
  * Get HTML for a google drive doc
@@ -76,11 +94,27 @@ export const getHtmlForDriveDoc = async (fileId: string) => {
     mimeType: "text/html",
   });
 
-  const html = htmlRes.data as string | undefined;
+  let html = htmlRes.data as string | undefined;
 
   if (!html) {
     throw new Error("No html found in export res");
   }
+
+  const $ = cheerio.load(html);
+
+  // Define the HTML entities to remove
+  const entitiesToRemove = ["", "", ""];
+
+  // Remove all <span> elements containing the specified entities
+  $("span").each((_, elem) => {
+    const spanContent = $(elem).html()?.trim();
+    if (spanContent && entitiesToRemove.includes(spanContent)) {
+      $(elem).remove();
+    }
+  });
+
+  // Get the modified HTML
+  html = $.html();
 
   return { htmlStr: html };
 };
@@ -157,3 +191,42 @@ export const getHtmlForDriveDoc = async (fileId: string) => {
 //     htmlStr,
 //   };
 // };
+
+export const insertPosts = async (fileIds: string[]) => {
+  for (const id of fileIds) {
+    const htmlContent = (await getHtmlForDriveDoc(id)).htmlStr;
+    const $ = cheerio.load(htmlContent.toString());
+
+    // Regex to match patterns like: %tags:aws,iam%
+    const pattern = /%(\w+):([^%]+)%/g;
+    let match;
+    const metadata: Record<string, string> = {};
+
+    while ((match = pattern.exec(htmlContent.toString())) !== null) {
+      const key = match[1];
+      const value = match[2].trim();
+      metadata[key] = value;
+    }
+
+    const tags = metadata.tags || "";
+    const author = metadata.author || "";
+    const createdAtStr = metadata.date_created || "";
+    const createdAt = createdAtStr ? new Date(createdAtStr) : undefined;
+
+    // Calculate read time (~200 wpm)
+    const fullText = $.text();
+    const wordCount = fullText.trim().split(/\s+/).length;
+    const readTime = Math.ceil(wordCount / 200);
+
+    const title = $("h1 span").text().trim();
+
+    await db.insert(postsTable).values({
+      documentId: id,
+      author,
+      title,
+      tags,
+      createdAt,
+      readTime,
+    });
+  }
+};

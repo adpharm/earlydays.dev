@@ -1,0 +1,103 @@
+---
+import Layout from "./_layout.astro";
+import { Button } from "@/components/ui/button";
+import { getFilesInDriveFolder } from "@/lib/google_drive";
+import { CONFIG } from "@/app_config";
+import { db } from "../db";
+import { postsTable, usersTable } from "@/schema";
+import { Badge } from "@/components/ui/badge";
+import { listFileIdsInDriveFolder } from "@/lib/google_drive";
+
+await listFileIdsInDriveFolder(CONFIG.google_drive_posts_folder_config);
+
+const posts = await db.select().from(postsTable);
+console.log("Posts: ", posts);
+
+const users = await db.select().from(usersTable);
+---
+
+<Layout>
+  <div class="w-full flex flex-col justify-center items-center text-center">
+    <div class="w-full max-w-5xl min-h-screen text-black p-4">
+      <div
+        class="w-full h-32 flex flex-col justify-center items-center px-10 space-y-2"
+      >
+        <h1 class="font-bold text-4xl">earlydays.dev</h1>
+        <p class="text-gray-600 text-sm">
+          Insights, Updates, and Stories from the Codebase
+        </p>
+      </div>
+
+      {
+        posts.map((post) => (
+          <div
+            id="post-card"
+            data-index={post.documentId}
+            class="p-4 border rounded-xl shadow-lg w-full flex flex-row items-stretch justify-between mb-6 hover:cursor-pointer"
+          >
+            <div class="flex flex-col items-start justify-center space-y-2 w-full p-2 px-4">
+              <h2 class="text-xl font-bold text-indigo-400">{post.title}</h2>
+              <p class="text-sm text-gray-600">
+                {post.createdAt.toLocaleDateString("en-CA", {
+                  weekday: "long",
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+                • {post.readTime} min read
+              </p>
+              {(() => {
+                const user = users.find((usr) => usr.name === post.author);
+                return (
+                  <div class="flex flex-row items-stretch justify-between w-full space-x-4">
+                    <div class="flex flex-row justify-center items-center space-x-2">
+                      <p>
+                        <span class="text-sm text-gray-600 font-bold">
+                          Written by:
+                        </span>{" "}
+                        {user?.name || post.author}
+                      </p>
+                      <img
+                        class="w-6 h-6 rounded-full overflow-hidden content-fit"
+                        src={user?.profileSrc}
+                        alt={user?.name || post.author}
+                      />
+                      <span>•</span>
+                      <a
+                        href={user?.gitUrl}
+                        target="_blank"
+                        class="text-sm text-indigo-400 font-bold hover:underline"
+                      >
+                        Github
+                      </a>
+                    </div>
+                    <div class="flex flex-row justify-center items-center">
+                      <div class="flex flex-row justify-center items-center space-x-1 w-1/2">
+                        {post.tags!.split(",").map((tag) => (
+                          <div class="flex justify-center items-center text-sm px-4 py-1 rounded-full bg-indigo-200 text-indigo-600">
+                            {tag}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const postCards = document.querySelectorAll("#post-card");
+      postCards.forEach((card) => {
+        card.addEventListener("click", () => {
+          const index = card.getAttribute("data-index");
+          window.location.href = `/p/${index}`;
+        });
+      });
+    });
+  </script>
+</Layout>
