@@ -51,17 +51,14 @@ const users = await db.select().from(usersTable);
                 return (
                   <div class="flex flex-row items-stretch justify-between w-full space-x-4">
                     <div class="flex flex-row justify-center items-center space-x-2">
-                      <p>
-                        <span class="text-sm text-gray-600 font-bold">
-                          Written by:
-                        </span>{" "}
-                        {user?.name || post.author}
-                      </p>
                       <img
                         class="w-6 h-6 rounded-full overflow-hidden content-fit"
                         src={user?.profileSrc}
                         alt={user?.name || post.author}
                       />
+                      <p>
+                        {user?.name || post.author}
+                      </p>
                       <span>•</span>
                       <a
                         href={user?.gitUrl}

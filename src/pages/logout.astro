@@ -1,0 +1,20 @@
+---
+import { db } from "@/db";
+import { sessionsTable } from "@/schema";
+import { eq } from "drizzle-orm";
+
+const sessionToken = Astro.cookies.get("sessionCookie")?.value;
+
+if (sessionToken) {
+  // Remove session from DB
+  await db.delete(sessionsTable).where(eq(sessionsTable.token, sessionToken));
+}
+
+// Clear the cookie by setting an expired Max-Age
+return new Response(null, {
+  status: 204,
+  headers: {
+    "Set-Cookie": `sessionCookie=; HttpOnly; Path=/; Max-Age=0; SameSite=Strict`,
+  },
+});
+---
