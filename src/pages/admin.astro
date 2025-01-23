@@ -40,137 +40,17 @@ if (!session) {
   });
 }
 
-// now we have user for this session
+// Fetch the user
 const [user] = await db
   .select()
   .from(usersTable)
   .where(eq(usersTable.id, session.userId));
 
-// This type is used to define the shape of our data.
-export type User = {
-  name: string;
-  email: string;
-  githubUrl: string;
-  profileSrc: string;
-  numberOfPosts: number;
-  editUser: string;
-};
-
-export type OtherPosts = {
-  title: string;
-  dateCreated: string;
-  dateUpdated: string;
-  readTime: number | null;
-  labels: string | null;
-  createdBy: string;
-  post: typeof postsTable.$inferSelect;
-};
-
-export const otherPostsColumns: ColumnDef<OtherPosts>[] = [
-  {
-    accessorKey: "title",
-    header: "Title",
-  },
-  {
-    accessorKey: "dateCreated",
-    header: "Date Created",
-  },
-  {
-    accessorKey: "dateUpdated",
-    header: "Date Updated",
-  },
-  {
-    accessorKey: "readTime",
-    header: "Read time",
-  },
-  {
-    accessorKey: "labels",
-    header: "Label(s)",
-  },
-  {
-    accessorKey: "createdBy",
-    header: "Created By",
-  },
-  {
-    accessorKey: "post",
-    header: "Edit Post",
-    cell: ({ row }) => <EditPostModal post={row.original.post} />,
-  },
-];
-
-export const userColumns: ColumnDef<User>[] = [
-  {
-    accessorKey: "name",
-    header: "Name",
-  },
-  {
-    accessorKey: "email",
-    header: "Email",
-  },
-  {
-    accessorKey: "githubUrl",
-    header: "Github",
-  },
-  {
-    accessorKey: "profileSrc",
-    header: "Profile Picture URL",
-  },
-  {
-    accessorKey: "numberOfPosts",
-    header: "# of posts",
-  },
-  {
-    accessorKey: "editUser",
-    header: "Edit Profile",
-  },
-];
-
-// data structures:
-
-// OTHER POSTS
-const otherPostsRaw = await db
+// Now fetch the "Your Posts"
+const yourPostsRaw = await db
   .select()
   .from(postsTable)
-  .where(ne(postsTable.author, user.name));
-
-// Transform into YourPosts shape
-const otherPosts = otherPostsRaw.map((p) => ({
-  title: p.title.substring(0, 15) + "...",
-  dateCreated: formatShortDate(p.createdAt),
-  dateUpdated: formatShortDate(p.updatedAt),
-  readTime: p.readTime,
-  labels: p.tags,
-  createdBy: p.author,
-  post: p,
-}));
-
-// USERS
-const usersRaw = await db.select().from(usersTable);
-
-// We'll do a GROUP BY on authorId to get the number of posts per user
-const counts = await db
-  .select({
-    authorName: postsTable.author,
-    postCount: sql<number>`COUNT(*)`,
-  })
-  .from(postsTable)
-  .groupBy(postsTable.author);
-
-// Create a quick Map { userId -> postCount }
-const userCountsMap = new Map<string, number>();
-counts.forEach((c) => {
-  userCountsMap.set(c.authorName, c.postCount);
-});
-
-// Transform into our "User" shape
-const allUsers = usersRaw.map((u) => ({
-  name: u.name,
-  email: u.email,
-  githubUrl: u.gitUrl ?? "",
-  profileSrc: u.profileSrc ?? "",
-  numberOfPosts: userCountsMap.get(u.name) ?? 0,
-  editUser: "Edit User",
-}));
+  .where(eq(postsTable.author, user.name));
 ---
 
 <Layout>
@@ -181,6 +61,14 @@ const allUsers = usersRaw.map((u) => ({
     <div
       class="w-full min-h-screen text-black p-4 flex flex-col justify-start items-center max-w-5xl space-y-10"
     >
+      <div class="w-full flex items-start justify-start">
+        <CustomButton
+          content="Create a new post"
+          dark
+          link
+          href="/admin/new-post"
+        />
+      </div>
       <div class="flex flex-col justify-center items-start space-y-2 w-full">
         <h2 class="text-white text-2xl">Your Posts</h2>
         <div
@@ -194,11 +82,12 @@ const allUsers = usersRaw.map((u) => ({
         <div
           class="w-full bg-blue-background-secondary border-8 border-yellow-bright rounded-3xl p-10"
         >
-          <DataTable
+          <!-- fix abstraction of columns -->
+          <!-- <DataTable
             columns={otherPostsColumns}
             data={otherPosts}
             client:load
-          />
+          /> -->
         </div>
       </div>
 
@@ -207,7 +96,7 @@ const allUsers = usersRaw.map((u) => ({
         <div
           class="w-full bg-blue-background-secondary border-8 border-yellow-bright rounded-3xl p-10"
         >
-          <DataTable columns={userColumns} data={allUsers} client:load />
+          <!-- <DataTable columns={userColumns} data={allUsers} client:load /> -->
         </div>
       </div>
 

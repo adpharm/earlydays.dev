@@ -12,8 +12,8 @@ type CustomButtonProps = {
 export function CustomButton({
   content,
   href,
-  dark = false,
-  link = true,
+  dark,
+  link,
   onClick,
 }: CustomButtonProps) {
   if (!link) {
