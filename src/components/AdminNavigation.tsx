@@ -18,7 +18,7 @@ function logOut() {
 
 export function AdminNavigation() {
   return (
-    <div className="flex flex-row justify-between items-center p-4 h-32 w-full bg-blue-background">
+    <div className="flex flex-row justify-between items-center p-4 h-32 w-full bg-black px-10">
       <div className="flex flex-row justify-center items-center space-x-8">
         <img
           src="/images/early-days-ai-logo.png"
@@ -34,7 +34,7 @@ export function AdminNavigation() {
         Instead of using href, we pass an onClick handler to trigger logout.
         We also set link={false} so CustomButton doesn't render an <a> tag.
       */}
-      <CustomButton content="Log out" onClick={logOut} dark link={false} />
+      <CustomButton content="Log out" onClick={logOut} link={false} />
     </div>
   );
 }

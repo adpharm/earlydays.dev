@@ -21,8 +21,8 @@ export function CustomButton({
       <button
         type="button"
         onClick={onClick}
-        className={`flex justify-center items-center p-2 px-10 bg-yellow-medium border-8 border-yellow-bright rounded-full text-white font-bold ${
-          dark ? "text-blue-background" : "text-white"
+        className={`flex justify-center items-center p-2 px-10 rounded-lg font-bold ${
+          dark ? "bg-black text-white" : "bg-white text-black"
         }`}
       >
         {content}
@@ -30,14 +30,13 @@ export function CustomButton({
     );
   }
   return (
-    <a href={href}>
-      <div
-        className={`flex justify-center items-center p-2 px-10 bg-yellow-medium border-8 border-yellow-bright rounded-full text-white font-bold ${
-          dark ? "text-blue-background" : "text-white"
-        }`}
-      >
-        {content}
-      </div>
+    <a
+      href={href}
+      className={`flex justify-center items-center p-2 px-10 rounded-lg font-bold ${
+        dark ? "bg-black text-white" : "bg-white text-black"
+      }`}
+    >
+      <div>{content}</div>
     </a>
   );
 }

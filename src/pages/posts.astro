@@ -8,7 +8,7 @@ import { postsTable, usersTable } from "@/schema";
 import { Badge } from "@/components/ui/badge";
 import { listFileIdsInDriveFolder } from "@/lib/google_drive";
 
-await listFileIdsInDriveFolder(CONFIG.google_drive_posts_folder_config);
+// await listFileIdsInDriveFolder(CONFIG.google_drive_posts_folder_config);
 
 const posts = await db.select().from(postsTable);
 console.log("Posts: ", posts);
@@ -32,7 +32,7 @@ const users = await db.select().from(usersTable);
         posts.map((post) => (
           <div
             id="post-card"
-            data-index={post.documentId}
+            data-index={post.id}
             class="p-4 border rounded-xl shadow-lg w-full flex flex-row items-stretch justify-between mb-6 hover:cursor-pointer"
           >
             <div class="flex flex-col items-start justify-center space-y-2 w-full p-2 px-4">
@@ -47,18 +47,17 @@ const users = await db.select().from(usersTable);
                 • {post.readTime} min read
               </p>
               {(() => {
-                const user = users.find((usr) => usr.name === post.author);
+                //const user = users.find((usr) => usr.id === post.author);
+                const user = users.at(0);
                 return (
                   <div class="flex flex-row items-stretch justify-between w-full space-x-4">
                     <div class="flex flex-row justify-center items-center space-x-2">
                       <img
                         class="w-6 h-6 rounded-full overflow-hidden content-fit"
                         src={user?.profileSrc}
-                        alt={user?.name || post.author}
+                        alt={user?.name || ""}
                       />
-                      <p>
-                        {user?.name || post.author}
-                      </p>
+                      <p>{user?.name || ""}</p>
                       <span>•</span>
                       <a
                         href={user?.gitUrl}

@@ -9,11 +9,14 @@ import {
 
 export const postsTable = pgTable("posts_table", {
   id: serial("id").primaryKey(),
-  documentId: text("document_id").notNull().unique(),
+  // documentId: text("document_id").notNull().unique(),
   title: text("title").notNull(),
-  author: text("author").notNull(),
+  author: integer("author")
+    .references(() => usersTable.id)
+    .notNull(),
   readTime: integer("read_time"),
   tags: text("tags"),
+  content: text("content"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")
     .notNull()
