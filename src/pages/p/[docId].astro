@@ -1,46 +1,43 @@
 ---
-import type { GetStaticPaths } from "astro";
-import {
-  listFileIdsInDriveFolder,
-  getHtmlForDriveDoc,
-} from "@/lib/google_drive";
-import { parseGoogleDocHtml } from "@/lib/google_doc_html_parser";
-import { CONFIG } from "@/app_config";
+import type { SelectPost } from "@/schema"; // Adjust the import based on your schema
 import Layout from "../_layout.astro";
+import Viewer from "@/components/Viewer";
+import { db } from "@/db";
+import { postsTable } from "@/schema";
+import { eq } from "drizzle-orm";
 
-/**
- * This is how we statically generate the paths for the pages.
- */
-export const getStaticPaths = (async () => {
-  // get the file ids in the post folder
-  const fileIds = await listFileIdsInDriveFolder(
-    CONFIG.google_drive_posts_folder_config
-  );
-
-  // map the file ids to the params object required by the page
-  return fileIds.map((fileId) => ({
-    params: { docId: fileId },
-  }));
-}) satisfies GetStaticPaths;
-
-/**
- * Get the params
- */
 const { docId } = Astro.params;
 
-// get the html for the doc
-const { htmlStr } = await getHtmlForDriveDoc(docId);
+let post: SelectPost | null = null;
+let error: string | null = null;
+let loading = true;
 
-//
-const { styleHtml, innerBodyHtml } = await parseGoogleDocHtml(htmlStr);
+try {
+  // Convert docId to a number
+  const postId = Number(docId);
+  if (isNaN(postId)) {
+    throw new Error("Invalid docId format.");
+  }
 
-// extract our special text from the html
+  // Fetch the post directly from the database
+  post = (
+    await db.select().from(postsTable).where(eq(postsTable.id, postId))
+  ).at(0);
+
+  if (!post) {
+    throw new Error("Post not found.");
+  }
+} catch (err) {
+  error = err instanceof Error ? err.message : "Failed to fetch the post.";
+  console.error(err);
+} finally {
+  loading = false;
+}
 ---
 
 <Layout>
-  <!-- insert body -->
-  <main set:html={innerBodyHtml} class:list={["max-w-3xl", "mx-auto"]} />
+  <!-- Insert body -->
+  <div>
+    {post && <Viewer content={post.content || ""} client:only="react" />}
+  </div>
 </Layout>
-
-<!-- insert styles -->
-<Fragment set:html={styleHtml} />

@@ -18,15 +18,9 @@ function logOut() {
 
 export function AdminNavigation() {
   return (
-    <div className="flex flex-row justify-between items-center p-4 h-32 w-full bg-black px-10">
+    <div className="flex flex-row justify-between items-center p-4 h-20 w-full bg-black px-10">
       <div className="flex flex-row justify-center items-center space-x-8">
-        <img
-          src="/images/early-days-ai-logo.png"
-          alt="earlydays.dev logo"
-          className="w-32"
-        />
-
-        <a href="/admin" className="text-3xl text-white min-w-64">
+        <a href="/admin" className="text-xl text-white min-w-64">
           Admin Dashboard
         </a>
       </div>

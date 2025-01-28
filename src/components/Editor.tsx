@@ -6,16 +6,16 @@ import "react-quill-new/dist/quill.snow.css";
 import { CustomButton } from "@/components/CustomButton";
 import React, { useState } from "react";
 import ReactQuill from "react-quill-new";
-import "react-quill-new/dist/quill.snow.css";
-import { SelectPost } from "@/schema";
+import { SelectPost, SelectUser } from "@/schema";
 
-type EditPostModalProps = {
-  post: SelectPost;
+type EditorProps = {
+  user: SelectUser;
+  post?: SelectPost;
 };
 
-const Editor = (post: any) => {
+const Editor: React.FC<EditorProps> = ({ user, post }) => {
   // Editor state
-  const [value, setValue] = useState(post.body || ""); // Assuming 'post.body' contains the body content
+  const [value, setValue] = useState(post?.content || "");
   const toolbarOptions = {
     toolbar: [
       [{ header: [1, 2, 3, false] }],
@@ -25,15 +25,15 @@ const Editor = (post: any) => {
     ],
   };
 
-  const [title, setNewTitle] = useState(post.title || "");
-  const [readTime, setReadTime] = useState(post.readTime?.toString() || "");
+  const [title, setNewTitle] = useState(post?.title || "");
+  const [readTime, setReadTime] = useState(post?.readTime?.toString() || "");
   // Initialize labels as an array. If 'post.tags' is a string, split it by commas.
   const initialLabels =
-    typeof post.tags === "string"
+    typeof post?.tags === "string"
       ? post.tags.split(",").map((tag: string) => tag.trim())
-      : post.tags || [];
+      : post?.tags || [];
   const [labels, setLabels] = useState<string[]>(initialLabels);
-  const [author, setAuthor] = useState(post.author || "");
+  const [author, setAuthor] = useState(user);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 

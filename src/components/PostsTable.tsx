@@ -19,7 +19,7 @@ export function PostsTable({ posts, showAuthor = false }: PostsTableProps) {
   type TableRow = {
     id: number;
     title: string;
-    author?: string;
+    author?: number;
     dateCreated: string;
     dateUpdated: string;
     readTime: number | null;
