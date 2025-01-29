@@ -1,7 +1,7 @@
 ---
 import Layout from "./_layout.astro";
 import { db } from "@/db";
-import { postsTable, sessionsTable } from "@/schema";
+import { SelectPost, sessionsTable, SelectUser } from "@/schema";
 import { usersTable } from "@/schema";
 import { eq, and, gt, ne, sql } from "drizzle-orm";
 import { AdminNavigation } from "@/components/AdminNavigation";
@@ -23,7 +23,6 @@ if (!sessionToken) {
   });
 }
 
-// current date to make sure session in db hasn't expired
 const now = new Date();
 const [session] = await db
   .select()
@@ -32,7 +31,6 @@ const [session] = await db
     and(eq(sessionsTable.token, sessionToken), gt(sessionsTable.expiresAt, now))
   );
 
-// If no valid session, redirect
 if (!session) {
   return new Response(null, {
     status: 302,
@@ -40,68 +38,141 @@ if (!session) {
   });
 }
 
-// Fetch the user
-const [user] = await db
-  .select()
-  .from(usersTable)
-  .where(eq(usersTable.id, session.userId));
+const baseUrl = process.env.BASE_URL;
+let users;
+let posts;
 
-// Now fetch the "Your Posts"
-const yourPostsRaw = await db
-  .select()
-  .from(postsTable)
-  .where(eq(postsTable.author, user.id));
+console.log(baseUrl);
 
-const otherPostsRaw = await db
-  .select()
-  .from(postsTable)
-  .where(ne(postsTable.author, user.id));
+try {
+  const response = await fetch(baseUrl + "/api/getUsers", {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  });
 
-const usersRaw = await db.select().from(usersTable);
+  if (!response.ok) {
+    const err = await response.json();
+    console.error("Failed to fetch users:", err);
+    throw new Error(err.error || "Unable to get Users");
+  }
+
+  const data = await response.json();
+
+  // Ensure the response contains 'users'
+  if (!data.users) {
+    console.error("Response from /api/getUsers does not contain 'users'.");
+    throw new Error("Invalid response structure for users.");
+  }
+
+  users = data.users;
+} catch (error: any) {
+  console.error("Error fetching users:", error.message || error);
+  throw new Error(error.message || "Unable to retrieve users.");
+}
+
+try {
+  const response = await fetch(baseUrl + "/api/getAllPosts", {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  });
+
+  if (!response.ok) {
+    const err = await response.json();
+    console.error("Failed to fetch posts:", err);
+    throw new Error(err.error || "Unable to get posts.");
+  }
+
+  const data = await response.json();
+
+  // Ensure the response contains 'posts'
+  if (!data.posts) {
+    console.error("Response from /api/getAllPosts does not contain 'posts'.");
+    throw new Error("Invalid response structure for posts.");
+  }
+
+  posts = data.posts;
+} catch (error: any) {
+  console.error("Error fetching posts:", error.message || error);
+  throw new Error(error.message || "Unable to retrieve posts.");
+}
+
+let yourPostsRaw;
+let otherPostsRaw;
+
+if (users && posts) {
+  // Ensure session and session.userId are defined
+  if (!session || !session.userId) {
+    console.error("Session or session.userId is undefined.");
+    throw new Error("User session is invalid.");
+  }
+
+  const user = users.find((user: SelectUser) => user.id === session.userId);
+
+  if (!user) {
+    console.error(`User with ID ${session.userId} not found.`);
+    throw new Error("User not found.");
+  }
+
+  yourPostsRaw = posts.filter((post: SelectPost) => post.author === user.id);
+  otherPostsRaw = posts.filter((post: SelectPost) => post.author !== user.id);
+
+  console.log("Your Posts:", yourPostsRaw);
+  console.log("Other Posts:", otherPostsRaw);
+} else {
+  console.error("Posts or Users is undefined.");
+  throw new Error("Posts or Users is undefined");
+}
 ---
 
 <Layout>
   <AdminNavigation client:load />
   <div
-    class="w-full flex flex-col justify-center items-center text-center bg-zinc-700 text-black"
+    class="min-h-screen bg-gradient-to-r from-pink-50 to-pink-100 text-gray-800"
   >
-    <div
-      class="w-full min-h-screen text-black p-4 flex flex-col justify-start items-center max-w-5xl space-y-10"
-    >
-      <div class="w-full flex items-start justify-start">
+    <div class="max-w-6xl mx-auto py-10 px-4 space-y-10">
+      <!-- Dashboard Header & New Post Button -->
+      <div class="flex items-center justify-between">
+        <h1 class="text-3xl font-bold text-pink-700">Admin Dashboard</h1>
         <CustomButton
           content="Create a new post"
-          dark
+          variant="dark"
           link
           href="/admin/new-post"
           client:only="react"
         />
       </div>
-      <div class="flex flex-col justify-center items-start space-y-2 w-full">
-        <h2 class="text-2xl">Your Posts</h2>
-        <div class="w-full bg-black rounded-lg p-2">
-          <PostsTable posts={yourPostsRaw} client:load />
+
+      <!-- Your Posts -->
+      <div class="space-y-6">
+        <h2 class="text-2xl font-semibold text-pink-700">Your Posts</h2>
+        <div class="bg-white rounded-md shadow p-4">
+          <PostsTable posts={yourPostsRaw} client:idle />
         </div>
       </div>
 
-      <div class="flex flex-col justify-center items-start space-y-2 w-full">
-        <h2 class="text-2xl">Others Posts</h2>
-        <div class="w-full bg-black rounded-lg p-2">
-          <PostsTable posts={otherPostsRaw} showAuthor client:load />
+      <!-- Other Posts -->
+      <div class="space-y-6">
+        <h2 class="text-2xl font-semibold text-pink-700">Others' Posts</h2>
+        <div class="bg-white rounded-md shadow p-4">
+          <PostsTable posts={otherPostsRaw} showAuthor client:idle />
         </div>
       </div>
 
-      <div class="flex flex-col justify-center items-start space-y-2 w-full">
-        <h2 class="text-2xl">Users</h2>
-        <div class="w-full bg-black rounded-lg p-2">
-          <UsersTable users={usersRaw} client:load />
+      <!-- Users -->
+      <div class="space-y-6">
+        <h2 class="text-2xl font-semibold text-pink-700">Users</h2>
+        <div class="bg-white rounded-md shadow p-4">
+          <UsersTable users={users} client:idle />
         </div>
       </div>
 
-      <div class="flex flex-col justify-center items-start space-y-2 w-full">
-        <h2 class="text-2xl">Other actions</h2>
-        <div class="w-full grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <ChangePasswordModal client:load />
+      <!-- Other actions -->
+      <div class="space-y-6">
+        <h2 class="text-2xl font-semibold text-pink-700">Other actions</h2>
+        <div class="bg-white rounded-md shadow p-4">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <ChangePasswordModal client:idle />
+          </div>
         </div>
       </div>
     </div>

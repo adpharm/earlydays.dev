@@ -97,7 +97,8 @@ export function PostsTable({ posts, showAuthor = false }: PostsTableProps) {
           cell: ({ row }) => (
             <a
               href={`/p/${row.original.id}/edit`}
-              className="flex flex-row justify-end items-center underline"
+              className="flex flex-row justify-end items-center underline text-pink-600"
+              rel="no-prefetch"
             >
               Edit <Pencil size={12} className="ml-2" />
             </a>

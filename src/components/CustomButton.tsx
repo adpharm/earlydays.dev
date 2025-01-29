@@ -1,42 +1,47 @@
-// CustomButton.tsx
 import React from "react";
+
+type ButtonVariant = "primary" | "dark" | "outline" | "light";
 
 type CustomButtonProps = {
   content: string;
   href?: string;
-  dark?: boolean;
   link?: boolean;
   onClick?: () => void;
+  variant?: ButtonVariant;
 };
 
 export function CustomButton({
   content,
   href,
-  dark,
-  link,
+  link = false,
   onClick,
+  variant = "primary",
 }: CustomButtonProps) {
-  if (!link) {
+  // Map variant -> Tailwind classes
+  const baseClasses =
+    "inline-flex items-center justify-center px-4 py-2 rounded font-semibold transition-colors";
+
+  const variantClasses = {
+    primary: "bg-pink-600 text-white hover:bg-pink-700",
+    dark: "bg-gray-800 text-white hover:bg-gray-700",
+    outline:
+      "border border-pink-600 text-pink-600 hover:bg-pink-600 hover:text-white",
+    light: "bg-white text-gray-800 hover:bg-gray-100",
+  }[variant];
+
+  // If it's a link, render an anchor
+  if (link && href) {
     return (
-      <button
-        type="button"
-        onClick={onClick}
-        className={`flex justify-center items-center p-2 px-10 rounded-lg font-bold ${
-          dark ? "bg-black text-white" : "bg-white text-black"
-        }`}
-      >
+      <a href={href} className={`${baseClasses} ${variantClasses}`}>
         {content}
-      </button>
+      </a>
     );
   }
+
+  // Otherwise, render a button
   return (
-    <a
-      href={href}
-      className={`flex justify-center items-center p-2 px-10 rounded-lg font-bold ${
-        dark ? "bg-black text-white" : "bg-white text-black"
-      }`}
-    >
-      <div>{content}</div>
-    </a>
+    <button onClick={onClick} className={`${baseClasses} ${variantClasses}`}>
+      {content}
+    </button>
   );
 }

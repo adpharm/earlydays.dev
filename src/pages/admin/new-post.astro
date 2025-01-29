@@ -5,7 +5,6 @@ import { postsTable, sessionsTable } from "@/schema";
 import { usersTable } from "@/schema";
 import { eq, and, gt, ne, sql } from "drizzle-orm";
 import { AdminNavigation } from "@/components/AdminNavigation";
-
 import Editor from "@/components/Editor";
 
 const sessionToken = Astro.cookies.get("sessionCookie")?.value;
@@ -17,7 +16,6 @@ if (!sessionToken) {
   });
 }
 
-// current date to make sure session in db hasn't expired
 const now = new Date();
 const [session] = await db
   .select()
@@ -26,7 +24,6 @@ const [session] = await db
     and(eq(sessionsTable.token, sessionToken), gt(sessionsTable.expiresAt, now))
   );
 
-// If no valid session, redirect
 if (!session) {
   return new Response(null, {
     status: 302,
@@ -49,13 +46,20 @@ const yourPostsRaw = await db
 
 <Layout>
   <AdminNavigation client:load />
-  <div
-    class="w-full flex flex-col justify-center items-center text-center bg-white"
-  >
+
+  <!-- Outer Container -->
+  <div class="min-h-screen bg-gradient-to-r from-pink-50 to-pink-100">
     <div
-      class="w-full min-h-screen text-black p-4 flex flex-col justify-start items-center max-w-5xl space-y-10"
+      class="max-w-5xl mx-auto p-4 flex flex-col justify-start items-center space-y-6"
     >
-      <Editor user={user} client:only="react" />
+      <h1 class="text-2xl font-semibold text-pink-700 text-center">
+        Create a New Post
+      </h1>
+
+      <!-- Editor Wrapper -->
+      <div class="bg-white shadow rounded-md p-6 w-full">
+        <Editor user={user} client:only="react" />
+      </div>
     </div>
   </div>
 </Layout>

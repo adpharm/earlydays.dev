@@ -1,0 +1,24 @@
+---
+import type { GetStaticPaths } from "astro";
+import {
+  listFileIdsInDriveFolder,
+  getHtmlForDriveDoc,
+} from "@/lib/google_drive";
+import { parseGoogleDocHtml } from "@/lib/google_doc_html_parser";
+import { CONFIG } from "@/app_config";
+import Layout from "./_layout.astro";
+import Editor from "@/components/Editor";
+import Viewer from "@/components/Viewer";
+import "react-quill-new/dist/quill.bubble.css";
+import { CustomButton } from "@/components/CustomButton";
+---
+
+<Layout>
+  <div class="w-full flex justify-center items-center">
+    <div class="w-full max-w-4xl flex justify-center items-center">
+      <h1>404 Not Found</h1>
+      <p>We're not sure how you got here...</p>
+      <CustomButton content="Go home" link href="/" client:idle />
+    </div>
+  </div>
+</Layout>

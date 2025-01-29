@@ -1,9 +1,7 @@
-// PostsTable.tsx
 import { ColumnDef } from "@tanstack/react-table";
 import { formatShortDate } from "@/lib/utils";
 import { DataTable } from "./DataTable";
 import { SelectUser } from "@/schema";
-import { CustomButton } from "./CustomButton";
 import { Pencil } from "lucide-react";
 import React from "react";
 
@@ -14,7 +12,6 @@ interface UsersTableProps {
 }
 
 export function UsersTable({ users }: UsersTableProps) {
-  // Define the structure of your table rows
   type TableRow = {
     id: number;
     name: string;
@@ -22,7 +19,6 @@ export function UsersTable({ users }: UsersTableProps) {
     gitUrl: string | null;
   };
 
-  // Define columns with conditional inclusion of the Author column
   const columns: ColumnDef<TableRow>[] = [
     {
       accessorKey: "id",
@@ -48,8 +44,8 @@ export function UsersTable({ users }: UsersTableProps) {
       header: "Edit Post",
       cell: ({ row }) => (
         <a
-          href={`/p/${row.original.id}/edit`}
-          className="flex flex-row justify-end items-center underline"
+          href={`/u/${row.original.id}/edit`}
+          className="flex items-center justify-end text-pink-600 hover:text-pink-800 transition-colors underline"
         >
           Edit <Pencil size={12} className="ml-2" />
         </a>
@@ -57,7 +53,6 @@ export function UsersTable({ users }: UsersTableProps) {
     },
   ];
 
-  // Shape data for the DataTable without embedding React elements
   const tableData: TableRow[] = users.map((u) => ({
     id: u.id,
     name: u.name,

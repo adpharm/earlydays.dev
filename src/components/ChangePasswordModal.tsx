@@ -6,6 +6,7 @@ import {
   DialogTitle,
   DialogHeader,
 } from "./ui/dialog";
+import { CustomButton } from "./CustomButton";
 
 export function ChangePasswordModal() {
   const [newPassword, setNewPassword] = useState("");
@@ -27,9 +28,7 @@ export function ChangePasswordModal() {
       const response = await fetch("/change-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          newPassword,
-        }),
+        body: JSON.stringify({ newPassword }),
       });
 
       if (!response.ok) {
@@ -37,7 +36,6 @@ export function ChangePasswordModal() {
         throw new Error(data?.message || "Failed to change password");
       }
 
-      // if successful
       setSuccessMessage("Password changed successfully!");
       setNewPassword("");
       setConfirmPassword("");
@@ -52,12 +50,14 @@ export function ChangePasswordModal() {
 
   return (
     <Dialog>
-      <DialogTrigger className="rounded-full bg-yellow-bright border-8 border-yellow-medium text-blue-background px-4 py-2 font-bold">
-        Change Password
+      <DialogTrigger>
+        <div className="rounded-lg border border-pink-600 text-pink-600 hover:bg-pink-600 hover:text-white w-52 py-2 px-4 transition-colors">
+          <p>Change Password</p>
+        </div>
       </DialogTrigger>
-      <DialogContent className="border-8 border-yellow-bright bg-blue-background">
+      <DialogContent className="p-6 bg-white rounded-md shadow-md">
         <DialogHeader>
-          <DialogTitle className="font-bold text-white">
+          <DialogTitle className="font-bold text-pink-700">
             Change Password
           </DialogTitle>
         </DialogHeader>
@@ -65,13 +65,13 @@ export function ChangePasswordModal() {
         <div className="mt-2">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="flex flex-col">
-              <label htmlFor="newPassword" className="text-white mb-2">
+              <label htmlFor="newPassword" className="text-gray-700 mb-2">
                 New Password
               </label>
               <input
                 id="newPassword"
                 type="password"
-                className="border border-blue-foreground text-white bg-blue-background p-2 rounded-xl"
+                className="border border-gray-300 p-2 rounded-md"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 required
@@ -79,13 +79,13 @@ export function ChangePasswordModal() {
             </div>
 
             <div className="flex flex-col">
-              <label htmlFor="confirmPassword" className="text-white mb-2">
+              <label htmlFor="confirmPassword" className="text-gray-700 mb-2">
                 Confirm New Password
               </label>
               <input
                 id="confirmPassword"
                 type="password"
-                className="border border-blue-foreground text-white bg-blue-background p-2 rounded-xl"
+                className="border border-gray-300 p-2 rounded-md"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
@@ -93,10 +93,10 @@ export function ChangePasswordModal() {
             </div>
 
             {errorMessage && (
-              <div className="text-red-400 text-sm">{errorMessage}</div>
+              <div className="text-red-500 text-sm">{errorMessage}</div>
             )}
             {successMessage && (
-              <div className="text-yellow-bright text-sm">
+              <div className="text-pink-600 text-sm">
                 {successMessage} You may safely close this pop-up.
               </div>
             )}

@@ -1,5 +1,5 @@
 ---
-import type { SelectPost } from "@/schema"; // Adjust the import based on your schema
+import type { SelectPost } from "@/schema";
 import Layout from "../_layout.astro";
 import Viewer from "@/components/Viewer";
 import { db } from "@/db";
@@ -8,16 +8,13 @@ import { eq } from "drizzle-orm";
 
 const { docId } = Astro.params;
 
-let post: SelectPost | null = null;
+let post: SelectPost | null | undefined = null;
 let error: string | null = null;
 let loading = true;
 
 try {
   // Convert docId to a number
   const postId = Number(docId);
-  if (isNaN(postId)) {
-    throw new Error("Invalid docId format.");
-  }
 
   // Fetch the post directly from the database
   post = (

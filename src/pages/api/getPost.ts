@@ -5,21 +5,22 @@ import { db } from "@/db";
 import { postsTable } from "@/schema";
 import { eq } from "drizzle-orm";
 
-export const GET: APIRoute = async ({ params }) => {
+export const POST: APIRoute = async ({ request }) => {
+  console.log("received request");
   try {
     // Extract the docId from the URL parameters
-    const docIdParam = params.docId;
+    const { docId } = await request.json();
 
-    if (!docIdParam) {
+    if (!docId) {
       return new Response(JSON.stringify({ error: "docId is required." }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
       });
     }
 
-    // Convert the docId to a number (assuming docId is numeric)
-    const docId = Number(docIdParam);
-    if (isNaN(docId)) {
+    // Convert the docId to a number
+    const id = Number(docId);
+    if (isNaN(id)) {
       return new Response(JSON.stringify({ error: "Invalid docId format." }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
@@ -28,7 +29,7 @@ export const GET: APIRoute = async ({ params }) => {
 
     // Fetch the post from the database
     const post = (
-      await db.select().from(postsTable).where(eq(postsTable.id, docId))
+      await db.select().from(postsTable).where(eq(postsTable.id, id))
     ).at(0);
 
     if (!post) {
