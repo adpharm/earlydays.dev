@@ -95,8 +95,7 @@ try {
   console.error("Error fetching posts:", error.message || error);
   throw new Error(error.message || "Unable to retrieve posts.");
 }
-
-let yourPostsRaw;
+let yourPublishedPosts, yourDrafts;
 let otherPostsRaw;
 
 if (users && posts) {
@@ -113,10 +112,16 @@ if (users && posts) {
     throw new Error("User not found.");
   }
 
-  yourPostsRaw = posts.filter((post: SelectPost) => post.author === user.id);
+  // get your published posts
+  yourPublishedPosts = posts.filter(
+    (post: SelectPost) => post.author === user.id && post.isPublished
+  );
+  // get your drafts
+  yourDrafts = posts.filter(
+    (post: SelectPost) => post.author === user.id && !post.isPublished
+  );
   otherPostsRaw = posts.filter((post: SelectPost) => post.author !== user.id);
 
-  console.log("Your Posts:", yourPostsRaw);
   console.log("Other Posts:", otherPostsRaw);
 } else {
   console.error("Posts or Users is undefined.");
@@ -142,32 +147,42 @@ if (users && posts) {
         />
       </div>
 
-      <!-- Your Posts -->
-      <div class="space-y-6">
-        <h2 class="text-2xl font-semibold text-pink-700">Your Posts</h2>
-        <div class="bg-white rounded-md shadow p-4">
-          <PostsTable posts={yourPostsRaw} client:idle />
+      <!-- Your Drafts -->
+      <div class="space-y-2">
+        <h2 class="text-2xl font-semibold text-pink-700">My Drafts</h2>
+        <div class="bg-white rounded-md shadow p-2">
+          <PostsTable posts={yourDrafts} client:idle />
+        </div>
+      </div>
+
+      <!-- Your Published Posts -->
+      <div class="space-y-2">
+        <h2 class="text-2xl font-semibold text-pink-700">My Published Posts</h2>
+        <div class="bg-white rounded-md shadow p-2">
+          <PostsTable posts={yourPublishedPosts} client:idle />
         </div>
       </div>
 
       <!-- Other Posts -->
-      <div class="space-y-6">
-        <h2 class="text-2xl font-semibold text-pink-700">Others' Posts</h2>
-        <div class="bg-white rounded-md shadow p-4">
+      <div class="space-y-2">
+        <h2 class="text-2xl font-semibold text-pink-700">
+          Posts From Other Adpharmers
+        </h2>
+        <div class="bg-white rounded-md shadow p-2">
           <PostsTable posts={otherPostsRaw} showAuthor client:idle />
         </div>
       </div>
 
       <!-- Users -->
-      <div class="space-y-6">
-        <h2 class="text-2xl font-semibold text-pink-700">Users</h2>
+      <div class="space-y-2">
+        <h2 class="text-2xl font-semibold text-pink-700">Adpharmers</h2>
         <div class="bg-white rounded-md shadow p-4">
           <UsersTable users={users} client:idle />
         </div>
       </div>
 
       <!-- Other actions -->
-      <div class="space-y-6">
+      <div class="space-y-2">
         <h2 class="text-2xl font-semibold text-pink-700">Other actions</h2>
         <div class="bg-white rounded-md shadow p-4">
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">

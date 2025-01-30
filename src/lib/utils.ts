@@ -1,3 +1,4 @@
+import { SelectPost } from "@/schema";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -25,5 +26,30 @@ export function formatShortDate(dt: Date | string | null | undefined): string {
     year: "numeric",
     month: "short",
     day: "numeric",
+  });
+}
+
+export async function createNewDraft() {
+  // we need to call fetch to create a new draft post
+  const response = await fetch("/api/insertPost", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(""),
+  });
+
+  if (!response.ok) {
+    const data = await response.json();
+    throw new Error(data.error || "Failed to create draft");
+  }
+
+  return response.json();
+}
+
+export async function publishPost(post: SelectPost) {
+  // publish the post
+  const response = await fetch("/api/publishPost", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(post),
   });
 }

@@ -29,20 +29,18 @@ export function PostsTable({ posts, showAuthor = false }: PostsTableProps) {
   // Define columns with conditional inclusion of the Author column
   const baseColumns: ColumnDef<TableRow>[] = [
     {
-      accessorKey: "id",
-      header: "ID",
-      cell: ({ getValue }) => <span>{getValue<number>()}</span>,
-    },
-    {
       accessorKey: "title",
       header: "Title",
-      cell: ({ getValue }) => (
-        <span>
-          {getValue<string>().length > 15
-            ? `${getValue<string>().substring(0, 15)}...`
-            : getValue<string>()}
-        </span>
-      ),
+      cell: ({ getValue }) => {
+        const value = getValue<string>();
+        return (
+          <span className={value.length < 1 ? "!text-gray-500" : ""}>
+            {value.length > 30
+              ? `${value.substring(0, 30)}...`
+              : value || "untitled"}
+          </span>
+        );
+      },
     },
     {
       accessorKey: "dateCreated",
@@ -64,7 +62,18 @@ export function PostsTable({ posts, showAuthor = false }: PostsTableProps) {
     {
       accessorKey: "labels",
       header: "Label(s)",
-      cell: ({ getValue }) => <span>{getValue<string>() ?? "N/A"}</span>,
+      cell: ({ getValue }) => {
+        const value = getValue<string>();
+        const splitValues = value.length > 0 ? value.split(",") : [];
+        return splitValues.map((value, index) => (
+          <span
+            key={index}
+            className="bg-pink-600 text-white px-3 py-1 rounded-full mx-1"
+          >
+            {value}
+          </span>
+        ));
+      },
     },
   ];
 
@@ -84,6 +93,7 @@ export function PostsTable({ posts, showAuthor = false }: PostsTableProps) {
             <a
               href={`/p/${row.original.id}/edit`}
               className="flex flex-row justify-end items-center underline"
+              rel="no-prefetch"
             >
               Edit <Pencil size={12} className="ml-2" />
             </a>
@@ -93,7 +103,7 @@ export function PostsTable({ posts, showAuthor = false }: PostsTableProps) {
     : [
         ...baseColumns,
         {
-          header: "Edit Post",
+          header: " ",
           cell: ({ row }) => (
             <a
               href={`/p/${row.original.id}/edit`}
@@ -109,7 +119,7 @@ export function PostsTable({ posts, showAuthor = false }: PostsTableProps) {
   // Shape data for the DataTable without embedding React elements
   const tableData: TableRow[] = posts.map((p) => ({
     id: p.id,
-    title: p.title,
+    title: p.title || "",
     ...(showAuthor && { author: p.author }),
     dateCreated: formatShortDate(p.createdAt),
     dateUpdated: formatShortDate(p.updatedAt),

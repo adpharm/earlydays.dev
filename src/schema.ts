@@ -1,4 +1,5 @@
 import {
+  boolean,
   integer,
   pgTable,
   serial,
@@ -10,13 +11,16 @@ import {
 export const postsTable = pgTable("posts_table", {
   id: serial("id").primaryKey(),
   // documentId: text("document_id").notNull().unique(),
-  title: text("title").notNull(),
+  title: text("title"),
   author: integer("author")
     .references(() => usersTable.id)
     .notNull(),
   readTime: integer("read_time"),
+  isPublished: boolean("is_published").notNull().default(false),
   tags: text("tags"),
   content: text("content"),
+  status: text("status").notNull().default("draft"),
+  publishedId: integer("published_id"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")
     .notNull()

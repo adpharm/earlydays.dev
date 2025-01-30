@@ -104,7 +104,7 @@ export function ChangePasswordModal() {
             <div className="w-full flex items-center justify-center">
               <button
                 type="submit"
-                className="mt-4 rounded-full bg-yellow-bright border-8 border-yellow-medium text-blue-background font-bold px-12 py-2"
+                className="mt-4 rounded-lg border border-pink-600 text-bold text-pink-600 hover:bg-pink-600 hover:text-white hover:transition-colors font-bold px-12 py-2"
               >
                 Confirm
               </button>

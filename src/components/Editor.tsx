@@ -6,9 +6,12 @@ import QuillEditor from "react-quill-new";
 import "@/lib/styles.modules.css";
 import "react-quill-new/dist/quill.snow.css";
 import { CustomButton } from "@/components/CustomButton";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReactQuill from "react-quill-new";
 import { SelectPost, SelectUser } from "@/schema";
+import { Check, LoaderCircle, X } from "lucide-react";
+import { useDebounce } from "@uidotdev/usehooks";
+import { publishPost } from "@/lib/utils";
 
 type EditorProps = {
   user: SelectUser;
@@ -21,11 +24,62 @@ const Editor: React.FC<EditorProps> = ({ user, post }) => {
   const [title, setNewTitle] = useState(post?.title || "");
   const [readTime, setReadTime] = useState(post?.readTime?.toString() || "");
 
+  // keep track of if the post is saved or not
+  const [isSaved, setIsSaved] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [changesMade, setChangesMade] = useState(false);
+  const [hasFailed, setHasFailed] = useState(false);
+
+  // debounced changes
+  const debouncedChanges = useDebounce(value, 1000);
+
+  const handleChange = (e: any) => {
+    setValue(e.target.value);
+  };
+
+  useEffect(() => {
+    const valueChange = async () => {
+      if (debouncedChanges && debouncedChanges !== post?.content) {
+        setIsSaving(true);
+        setIsSaved(false);
+        setChangesMade(true);
+        // build payload
+        const payload = {
+          id: post?.id,
+          title: title || "",
+          content: debouncedChanges,
+          readTime: readTime || 0,
+          tags: labels.length > 0 ? labels.join(",") : "",
+          isPublished: false,
+          status: "draft",
+        };
+
+        console.log("SENDING PAYLOAD: ", payload);
+
+        const response = await fetch("/api/updatePost", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ payload }),
+        });
+
+        if (!response.ok) {
+          setHasFailed(true);
+        } else {
+          setIsSaved(true);
+        }
+        setChangesMade(false);
+        setIsSaving(false);
+      }
+    };
+
+    valueChange();
+  }, [debouncedChanges]);
+
   // Initialize labels as an array
   const initialLabels =
-    typeof post?.tags === "string"
+    typeof post?.tags === "string" && post?.tags.length > 0
       ? post.tags.split(",").map((tag: string) => tag.trim())
-      : post?.tags || [];
+      : [];
   const [labels, setLabels] = useState<string[]>(initialLabels);
 
   // State for new label input
@@ -73,35 +127,15 @@ const Editor: React.FC<EditorProps> = ({ user, post }) => {
     setErrorMessage("");
     setSuccessMessage("");
 
-    const payload = {
-      title,
-      content: value,
-      tags: labels.join(","),
-      readTime: readTime ? Number(readTime) : undefined,
-    };
-
-    try {
-      const response = await fetch("/api/insertPost", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        const err = await response.json();
-        throw new Error(err.error || "Request failed");
-      }
-
-      setSuccessMessage("Post created successfully!");
-    } catch (error: any) {
-      setErrorMessage(error.message);
+    if (post) {
+      publishPost(post);
     }
   }
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-6 w-full max-w-4xl mx-auto p-4 text-gray-800"
+      className="space-y-6 w-full max-w-4xl mx-auto text-gray-800"
     >
       {/* Title Field */}
       <div className="flex flex-col">
@@ -187,7 +221,24 @@ const Editor: React.FC<EditorProps> = ({ user, post }) => {
 
       {/* Body Field */}
       <div className="flex flex-col">
-        <label className="mb-2 text-left text-xl font-medium">Body</label>
+        <div className="flex flex-row justify-between items-center">
+          <label className="mb-2 text-left text-xl font-medium">Body</label>
+          {isSaved && (
+            <div className="flex flex-row justify-end items-center w-full">
+              <span className="text-xs text-slate-700">Changes saved</span>
+              <Check size={16} className="ml-2 text-green-600" />
+            </div>
+          )}
+          {isSaving && changesMade && (
+            <div className="flex flex-row justify-end items-center w-full">
+              <span className="text-xs text-slate-700">Saving...</span>
+              <LoaderCircle className="animate-spin w-4 h-4 text-pink-600" />
+            </div>
+          )}
+          {!isSaved && !changesMade && (
+            <span className="text-xs text-slate-700">No changes made</span>
+          )}
+        </div>
         <ReactQuill
           theme="snow"
           value={value}
@@ -209,13 +260,9 @@ const Editor: React.FC<EditorProps> = ({ user, post }) => {
       )}
 
       {/* Submit Buttons */}
-      <div className="w-full flex items-center justify-end space-x-4 pt-6">
+      <div className="w-full flex items-center justify-end space-x-4 pt-10">
         <CustomButton content="Save Draft" variant="light" onClick={() => {}} />
-        <CustomButton
-          content="Save and Submit"
-          variant="primary"
-          onClick={() => {}}
-        />
+        <CustomButton content="Publish" variant="primary" onClick={() => {}} />
       </div>
     </form>
   );

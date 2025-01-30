@@ -47,8 +47,7 @@ const users = await db.select().from(usersTable);
                 • {post.readTime} min read
               </p>
               {(() => {
-                //const user = users.find((usr) => usr.id === post.author);
-                const user = users.at(0);
+                const user = users.find((usr) => usr.id === post.author);
                 return (
                   <div class="flex flex-row items-stretch justify-between w-full space-x-4">
                     <div class="flex flex-row justify-center items-center space-x-2">
