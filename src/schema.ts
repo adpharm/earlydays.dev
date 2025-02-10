@@ -17,7 +17,7 @@ export const postsTable = pgTable("posts_table", {
     .notNull(),
   readTime: integer("read_time"),
   isPublished: boolean("is_published").notNull().default(false),
-  tags: text("tags"),
+  tags: text("tags").notNull().default(""),
   content: text("content"),
   status: text("status").notNull().default("draft"),
   publishedId: integer("published_id"),

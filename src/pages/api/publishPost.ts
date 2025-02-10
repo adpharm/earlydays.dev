@@ -57,7 +57,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       });
     }
 
-    // Update user in the database
+    // Update post in the database
     const [updatedPost] = await db
       .update(postsTable)
       .set({

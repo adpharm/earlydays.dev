@@ -46,6 +46,13 @@ export async function createNewDraft() {
 }
 
 export async function publishPost(post: SelectPost) {
+  // save changes
+  await fetch("/api/updatePost", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(post),
+  });
+
   // publish the post
   const response = await fetch("/api/publishPost", {
     method: "POST",

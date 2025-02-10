@@ -15,6 +15,7 @@ interface ImageUploaderProps {
 const ImageUploader: React.FC<ImageUploaderProps> = ({ imgSrc }) => {
   const [previewSrc, setPreviewSrc] = useState(imgSrc);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [open, setOpen] = useState(false);
 
   /**
    * When user picks a file, we do a local preview only.
@@ -90,7 +91,8 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ imgSrc }) => {
         // Update local preview if you want to reflect the new final URL
         setPreviewSrc(finalUrl);
 
-        alert("Image uploaded successfully!");
+        // close the modal on success
+        setOpen(false);
       };
     } catch (error) {
       console.error("Error uploading image:", error);
@@ -99,7 +101,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ imgSrc }) => {
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
         <div
           className="relative w-32 h-32 rounded-full overflow-hidden cursor-pointer"

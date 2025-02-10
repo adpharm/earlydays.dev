@@ -89,7 +89,7 @@ if (Astro.request.method === "POST") {
   console.log(formData, payload, baseUrl);
 
   try {
-    const response = await fetch("localhost:3000/api/updateUser.ts", {
+    const response = await fetch(`${baseUrl}/api/updateUser`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -100,7 +100,7 @@ if (Astro.request.method === "POST") {
     }
     console.log("Successfully updated user");
   } catch (error: any) {
-    throw new Error("Unable to update user: ", error);
+    throw new Error("Unable to update user: " + error.message);
   }
 
   // Redirect after successful update
