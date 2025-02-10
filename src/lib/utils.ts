@@ -53,3 +53,15 @@ export async function publishPost(post: SelectPost) {
     body: JSON.stringify(post),
   });
 }
+
+export async function deletePost(postId: number) {
+  console.log("POST ID: ", postId);
+  // delete the post
+  const response = await fetch("/api/deletePost", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ postId }),
+  });
+
+  return response;
+}

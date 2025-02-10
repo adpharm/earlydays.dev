@@ -7,10 +7,14 @@ import { db } from "../db";
 import { postsTable, usersTable } from "@/schema";
 import { Badge } from "@/components/ui/badge";
 import { listFileIdsInDriveFolder } from "@/lib/google_drive";
+import { eq } from "drizzle-orm";
 
 // await listFileIdsInDriveFolder(CONFIG.google_drive_posts_folder_config);
 
-const posts = await db.select().from(postsTable);
+const posts = await db
+  .select()
+  .from(postsTable)
+  .where(eq(postsTable.isPublished, true));
 console.log("Posts: ", posts);
 
 const users = await db.select().from(usersTable);
@@ -47,8 +51,7 @@ const users = await db.select().from(usersTable);
                 • {post.readTime} min read
               </p>
               {(() => {
-                //const user = users.find((usr) => usr.id === post.author);
-                const user = users.at(0);
+                const user = users.find((usr) => usr.id === post.author);
                 return (
                   <div class="flex flex-row items-stretch justify-between w-full space-x-4">
                     <div class="flex flex-row justify-center items-center space-x-2">
@@ -67,15 +70,17 @@ const users = await db.select().from(usersTable);
                         Github
                       </a>
                     </div>
-                    <div class="flex flex-row justify-center items-center">
-                      <div class="flex flex-row justify-center items-center space-x-1 w-1/2">
-                        {post.tags!.split(",").map((tag) => (
-                          <div class="flex justify-center items-center text-sm px-4 py-1 rounded-full bg-indigo-200 text-indigo-600">
-                            {tag}
-                          </div>
-                        ))}
+                    {post.tags && post.tags !== "" && (
+                      <div class="flex flex-row justify-center items-center">
+                        <div class="flex flex-row justify-center items-center space-x-1 w-1/2">
+                          {post.tags.split(",").map((tag) => (
+                            <div class="flex justify-center items-center text-sm px-4 py-1 rounded-full bg-indigo-200 text-indigo-600">
+                              {tag}
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                 );
               })()}
