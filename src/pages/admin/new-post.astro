@@ -1,8 +1,8 @@
 ---
 import Layout from "../_layout.astro";
 import { db } from "@/db";
-import { postsTable, sessionsTable } from "@/schema";
-import { usersTable } from "@/schema";
+import { postsTable, sessionsTable } from "@/db/schema";
+import { usersTable } from "@/db/schema";
 import { eq, and, gt, ne, sql } from "drizzle-orm";
 import { AdminNavigation } from "@/components/AdminNavigation";
 import Editor from "@/components/Editor";

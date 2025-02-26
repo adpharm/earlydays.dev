@@ -1,0 +1,64 @@
+version: "3"
+
+# https://taskfile.dev/usage/#output-syntax
+output: prefixed
+
+vars:
+  AWS_PROFILE: "pharmer"
+
+dotenv:
+  - .env
+
+tasks:
+  default:
+    cmds:
+      - task --list-all
+  ########################################################################################################################
+  #
+  #                                        AWS commands (archived)
+  #
+  ########################################################################################################################
+  login:
+    requires:
+      vars:
+        - AWS_PROFILE
+    vars:
+      AWS_PROFILE: "{{.AWS_PROFILE}}"
+    cmds:
+      - aws sso login --profile {{.AWS_PROFILE}}
+
+  check-aws-identity:
+    requires:
+      vars:
+        - AWS_PROFILE
+    vars:
+      AWS_PROFILE: "{{.AWS_PROFILE}}"
+    cmds:
+      - |
+        if ! aws sts get-caller-identity --profile {{.AWS_PROFILE}}; then
+          echo ""
+          echo "Your '{{.AWS_PROFILE}}' AWS profile is not logged in. Run 'task login' to log in."
+          exit 1
+        fi
+    silent: true
+
+  ########################################################################################################################
+  #
+  #                                        App commands
+  #
+  ########################################################################################################################
+
+  # --------------------------------------------------------------------------------------------------------------------
+  # Start commands
+  # --------------------------------------------------------------------------------------------------------------------
+  start:
+    cmds:
+      - bunx astro dev
+
+  # --------------------------------------------------------------------------------------------------------------------
+  # Migration commands
+  # --------------------------------------------------------------------------------------------------------------------
+  push:
+    interactive: true
+    cmds:
+      - bunx drizzle-kit push

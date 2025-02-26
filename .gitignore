@@ -26,3 +26,7 @@ pnpm-debug.log*
 # added
 
 *.creds.*
+
+.env
+.env.*
+!.env.example

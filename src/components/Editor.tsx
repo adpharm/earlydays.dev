@@ -8,7 +8,7 @@ import "react-quill-new/dist/quill.snow.css";
 import { CustomButton } from "@/components/CustomButton";
 import React, { useState, useEffect } from "react";
 import ReactQuill from "react-quill-new";
-import { SelectPost, SelectUser } from "@/schema";
+import { SelectPost, SelectUser } from "@/db/schema";
 import { Check, LoaderCircle, X } from "lucide-react";
 import { useDebounce } from "@uidotdev/usehooks";
 import { publishPost } from "@/lib/utils";

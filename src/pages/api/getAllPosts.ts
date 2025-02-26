@@ -2,7 +2,7 @@
 
 import type { APIRoute } from "astro";
 import { db } from "@/db";
-import { postsTable } from "@/schema";
+import { postsTable } from "@/db/schema";
 
 export const GET: APIRoute = async () => {
   try {

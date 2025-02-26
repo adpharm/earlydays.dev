@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { db } from "@/db";
-import { usersTable } from "@/schema";
+import { usersTable } from "@/db/schema";
 
 export const GET: APIRoute = async () => {
   try {

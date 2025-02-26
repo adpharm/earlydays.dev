@@ -1,0 +1,14 @@
+---
+import Layout from "./Layout.astro";
+import type { LayoutProps } from "./layoutProps";
+import { AppSidebarWrapper } from "@/components/_/app-sidebar/AppSidebarWrapper";
+
+type Props = LayoutProps;
+const props = Astro.props;
+---
+
+<Layout {...props}>
+  <AppSidebarWrapper client:load>
+    <slot />
+  </AppSidebarWrapper>
+</Layout>

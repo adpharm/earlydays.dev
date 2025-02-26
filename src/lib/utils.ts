@@ -1,9 +1,22 @@
-import { SelectPost } from "@/schema";
+import type { SelectPost } from "@/db/schema";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
+}
+
+/**
+ *
+ *
+ * For use with a Zod Enum (annoying)
+ */
+export function toTuple<T extends string>(items: T[]): [T, ...T[]] {
+  if (items.length === 0) {
+    throw new Error("Cannot convert empty array to tuple");
+  }
+
+  return items as [T, ...T[]];
 }
 
 export function formatShortDate(dt: Date | string | null | undefined): string {

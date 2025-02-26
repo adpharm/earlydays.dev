@@ -1,9 +1,9 @@
 ---
-import type { SelectPost } from "@/schema";
+import type { SelectPost } from "@/db/schema";
 import Layout from "../_layout.astro";
 import Viewer from "@/components/Viewer";
 import { db } from "@/db";
-import { postsTable } from "@/schema";
+import { postsTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 const { docId } = Astro.params;

@@ -1,6 +1,6 @@
 ---
 import { db } from "@/db";
-import { sessionsTable } from "@/schema";
+import { sessionsTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 const sessionToken = Astro.cookies.get("sessionCookie")?.value;

@@ -2,7 +2,7 @@
 
 import type { APIRoute } from "astro";
 import { db } from "@/db";
-import { postsTable } from "@/schema";
+import { postsTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 export const POST: APIRoute = async ({ request }) => {

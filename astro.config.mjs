@@ -1,11 +1,9 @@
 // @ts-check
 import { defineConfig } from "astro/config";
-
+import tailwindcss from "@tailwindcss/vite";
+import vercel from "@astrojs/vercel";
 import react from "@astrojs/react";
-
-import tailwind from "@astrojs/tailwind";
-
-import node from "@astrojs/node";
+import inoxToolsRequestNanostores from "@inox-tools/request-nanostores";
 
 // https://astro.build/config
 export default defineConfig({
@@ -18,14 +16,10 @@ export default defineConfig({
 
   output: "server",
 
-  integrations: [
-    react(),
-    tailwind({
-      applyBaseStyles: false,
-    }),
-  ],
+  vite: {
+    plugins: [tailwindcss()],
+  },
 
-  adapter: node({
-    mode: "standalone",
-  }),
+  adapter: vercel(),
+  integrations: [react(), inoxToolsRequestNanostores()],
 });

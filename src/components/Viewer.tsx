@@ -6,7 +6,7 @@ import "react-quill-new/dist/quill.snow.css";
 import { CustomButton } from "@/components/CustomButton";
 import React, { useState } from "react";
 import ReactQuill from "react-quill-new";
-import { SelectPost, SelectUser } from "@/schema";
+import { SelectPost, SelectUser } from "@/db/schema";
 
 type ViewerProps = {
   content: string;

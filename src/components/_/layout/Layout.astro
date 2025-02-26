@@ -1,0 +1,50 @@
+---
+import "@/styles/globals.css";
+import { Toaster } from "@/components/ui/sonner";
+import type { LayoutProps } from "./layoutProps";
+
+// Define the props
+type Props = LayoutProps;
+
+// declare const window: Window & { dataLayer: Record<string, unknown>[] };
+
+const { title, hideTitleTagSuffix, noindex } = Astro.props;
+
+const currentPath = Astro.url.pathname;
+
+// Define the description
+const desc =
+  "Early Days is a blog about software development, programming, and technology. We share insights, updates, and stories from the codebase.";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+
+    <title>
+      {title}
+      {hideTitleTagSuffix ? "" : " | Sixteen Mile Veterinary Clinic"}
+    </title>
+
+    <meta name="description" content={desc} />
+
+    <slot name="meta" />
+
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={desc} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={Astro.request.url} />
+    <meta property="og:image" content="/ogimage.jpg" />
+    <meta property="og:image:width" content="1080" />
+    <meta property="og:image:height" content="720" />
+
+    {noindex && <meta name="robots" content="noindex,follow" />}
+  </head>
+  <body>
+    <slot />
+
+    <Toaster client:idle />
+  </body>
+</html>

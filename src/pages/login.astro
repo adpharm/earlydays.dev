@@ -2,7 +2,7 @@
 import Layout from "./_layout.astro";
 import { Client } from "pg";
 import * as bcrypt from "bcrypt";
-import { usersTable, sessionsTable } from "@/schema";
+import { usersTable, sessionsTable } from "@/db/schema";
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
 

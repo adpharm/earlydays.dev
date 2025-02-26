@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { db } from "@/db";
-import { postsTable, sessionsTable, usersTable } from "@/schema";
+import { postsTable, sessionsTable, usersTable } from "@/db/schema";
 import { eq, and, gt } from "drizzle-orm";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 

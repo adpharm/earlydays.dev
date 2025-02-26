@@ -1,10 +1,10 @@
 ---
 import Layout from "../../_layout.astro";
-import { sessionsTable, usersTable } from "@/schema";
+import { sessionsTable, usersTable } from "@/db/schema";
 import { eq, and, gt } from "drizzle-orm";
 import { db } from "@/db";
 import { AdminNavigation } from "@/components/AdminNavigation";
-import { SelectPost, postsTable } from "@/schema";
+import { SelectPost, postsTable } from "@/db/schema";
 import { CircleArrowLeft } from "lucide-react";
 import Editor from "@/components/Editor";
 import { ConfirmDeleteModal } from "@/components/ConfirmDeleteModal";

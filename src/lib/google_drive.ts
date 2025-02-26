@@ -4,7 +4,7 @@ import fs from "node:fs/promises";
 import JSZip from "jszip";
 import * as cheerio from "cheerio";
 import { db } from "../db";
-import { postsTable, SelectPost } from "@/schema";
+import { postsTable, SelectPost } from "@/db/schema";
 
 const SCOPES = ["https://www.googleapis.com/auth/drive.readonly"];
 const CREDENTIALS_PATH = path.join(

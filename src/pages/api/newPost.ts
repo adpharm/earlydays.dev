@@ -1,8 +1,8 @@
 // src/pages/api/new-post.ts
 import type { APIRoute } from "astro";
 import { db } from "@/db";
-import { postsTable, sessionsTable } from "@/schema";
-import { usersTable } from "@/schema";
+import { postsTable, sessionsTable } from "@/db/schema";
+import { usersTable } from "@/db/schema";
 import { eq, and, gt } from "drizzle-orm";
 
 export const POST: APIRoute = async ({ request, cookies }) => {

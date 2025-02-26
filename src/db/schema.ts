@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import {
   boolean,
   integer,
@@ -7,6 +8,22 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
+
+/***************************************************************
+ *
+ * Common
+ *
+ ****************************************************************/
+// timestamps
+const timestamps = {
+  created_at: timestamp({ withTimezone: true, mode: "string" })
+    .default(sql`(now() AT TIME ZONE 'utc'::text)`)
+    .notNull(),
+  updated_at: timestamp({ withTimezone: true, mode: "string" })
+    .default(sql`(now() AT TIME ZONE 'utc'::text)`)
+    .notNull()
+    .$onUpdate(() => sql`(now() AT TIME ZONE 'utc'::text)`),
+};
 
 export const postsTable = pgTable("posts_table", {
   id: serial("id").primaryKey(),
