@@ -4,6 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 import vercel from "@astrojs/vercel";
 import react from "@astrojs/react";
 import inoxToolsRequestNanostores from "@inox-tools/request-nanostores";
+import { astroAuthIntegration } from "./src/lib/auth.js";
 
 // https://astro.build/config
 export default defineConfig({
@@ -21,5 +22,5 @@ export default defineConfig({
   },
 
   adapter: vercel(),
-  integrations: [react(), inoxToolsRequestNanostores()],
+  integrations: [react(), inoxToolsRequestNanostores(), astroAuthIntegration()],
 });

@@ -13,6 +13,7 @@
     "@astrojs/react": "4.2.0",
     "@astrojs/tailwind": "6.0.0",
     "@astrojs/vercel": "^8.0.8",
+    "@auth/core": "^0.37.4",
     "@aws-sdk/client-s3": "^3.750.0",
     "@inox-tools/request-nanostores": "^0.2.3",
     "@nanostores/react": "^0.8.4",
@@ -47,6 +48,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-quill-new": "^3.3.3",
+    "set-cookie-parser": "^2.7.1",
     "sonner": "^2.0.1",
     "sqlite3": "^5.1.7",
     "tailwind-merge": "^3.0.2",
@@ -57,6 +59,7 @@
   "devDependencies": {
     "@types/bun": "^1.2.3",
     "@types/pg": "^8.11.11",
+    "@types/set-cookie-parser": "^2.4.10",
     "cheerio": "^1.0.0",
     "drizzle-kit": "^0.30.5",
     "googleapis": "^144.0.0",

@@ -1,0 +1,15 @@
+---
+import Layout from "@/components/_/layout/Layout.astro";
+---
+
+<Layout title="login">
+  <button id="login">Login</button>
+  <button id="logout">Logout</button>
+
+  <script>
+    import { signIn } from "@/lib/auth.js/client";
+
+    document.querySelector("#login").onclick = () => signIn("github");
+    // document.querySelector("#logout").onclick = () => signOut();
+  </script>
+</Layout>
