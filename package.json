@@ -50,7 +50,6 @@
     "react-quill-new": "^3.3.3",
     "set-cookie-parser": "^2.7.1",
     "sonner": "^2.0.1",
-    "sqlite3": "^5.1.7",
     "tailwind-merge": "^3.0.2",
     "tailwindcss": "^4.0.9",
     "tailwindcss-animate": "^1.0.7",
