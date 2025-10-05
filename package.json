@@ -7,7 +7,8 @@
     "start": "echo 'Use Taskfile'",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "typecheck": "astro check --minimumFailingSeverity error"
   },
   "dependencies": {
     "@astrojs/react": "4.2.0",
@@ -56,6 +57,7 @@
     "typescript": "^5.7.3"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.4",
     "@types/bun": "^1.2.3",
     "@types/pg": "^8.11.11",
     "@types/set-cookie-parser": "^2.4.10",

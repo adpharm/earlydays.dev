@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogTrigger,
@@ -6,7 +6,6 @@ import {
   DialogTitle,
   DialogHeader,
 } from "./ui/dialog";
-import { CustomButton } from "./CustomButton";
 
 export function ChangePasswordModal() {
   const [newPassword, setNewPassword] = useState("");

@@ -1,0 +1,1 @@
+import{j as e}from"./jsx-runtime.D_zvdyIk.js";import{R as r}from"./index.BtOH_gMh.js";import"./index.DxhH1ShK.js";const s=({content:t})=>e.jsx(r,{theme:"bubble",value:t,className:"text-black decoration-white bg-gray-300 w-full h-min-screen mb-6"});export{s as default};

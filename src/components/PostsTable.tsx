@@ -1,11 +1,9 @@
 // PostsTable.tsx
-import { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef } from "@tanstack/react-table";
 import { formatShortDate } from "@/lib/utils";
 import { DataTable } from "./DataTable";
-import { SelectPost } from "@/db/schema";
-import { CustomButton } from "./CustomButton";
+import type { SelectPost } from "@/db/schema";
 import { Pencil } from "lucide-react";
-import React from "react";
 
 type Post = SelectPost;
 

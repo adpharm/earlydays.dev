@@ -5,7 +5,6 @@ import {
   DialogContent,
   DialogTitle,
   DialogHeader,
-  DialogClose,
 } from "./ui/dialog";
 
 interface ImageUploaderProps {

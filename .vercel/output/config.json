@@ -1,0 +1,135 @@
+{
+	"version": 3,
+	"routes": [
+		{
+			"handle": "filesystem"
+		},
+		{
+			"src": "^/_astro/(.*)$",
+			"headers": {
+				"cache-control": "public, max-age=31536000, immutable"
+			},
+			"continue": true
+		},
+		{
+			"src": "^/_server-islands/([^/]+?)/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/_image/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/_actions(?:/(.*?))?/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/\\$/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/admin/new-post/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/admin/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/api/deletePost/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/api/getAllPosts/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/api/getPost/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/api/getUsers/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/api/insertDraft/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/api/insertPost/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/api/newPost/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/api/publishPost/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/api/updatePost/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/api/updateUser/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/api/uploadProfileImage/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/app/login/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/app/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/auth(?:/(.*?))?/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/change-password/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/login/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/logout/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/p/test/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/p/([^/]+?)/edit/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/p/([^/]+?)/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/posts/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/u/([^/]+?)/edit/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/u/([^/]+?)/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/$",
+			"dest": "_render"
+		}
+	]
+}

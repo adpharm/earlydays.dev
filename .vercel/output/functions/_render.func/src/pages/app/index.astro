@@ -1,0 +1,10 @@
+---
+import LayoutWithAppSidebar from "@/components/_/layout/LayoutWithAppSidebar.astro";
+
+// Protected
+if (!Astro.locals.session) return Astro.redirect("/app/login");
+---
+
+<LayoutWithAppSidebar title="earlydays app">
+  <div>Hello world</div>
+</LayoutWithAppSidebar>

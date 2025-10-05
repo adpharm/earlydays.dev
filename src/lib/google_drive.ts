@@ -4,7 +4,8 @@ import fs from "node:fs/promises";
 import JSZip from "jszip";
 import * as cheerio from "cheerio";
 import { db } from "../db";
-import { postsTable, SelectPost } from "@/db/schema";
+import { postsTable } from "@/db/schema";
+import type { SelectPost } from "@/db/schema";
 
 const SCOPES = ["https://www.googleapis.com/auth/drive.readonly"];
 const CREDENTIALS_PATH = path.join(
@@ -36,16 +37,12 @@ export const listFileIdsInDriveFolder = async (folderId: string) => {
 
   const fileIds = files.map((f) => f.id).filter((id): id is string => !!id);
 
-  // add any files that aren't in our db, to our db
-  // first select all posts
-  const posts = await db.select().from(postsTable);
-  const existingIds = posts.map((post) => post.documentId);
-
-  // get a list of all fileIds that are not currently in postsTable.documentId
-  const newFileIds = fileIds.filter((id) => !existingIds.includes(id));
-
-  // call function to insert new fileIds into table
-  await insertPosts(newFileIds);
+  // TODO: add any files that aren't in our db, to our db
+  // NOTE: This requires documentId field in postsTable schema to be uncommented
+  // const posts = await db.select().from(postsTable);
+  // const existingIds = posts.map((post) => post.documentId);
+  // const newFileIds = fileIds.filter((id) => !existingIds.includes(id));
+  // await insertPosts(newFileIds);
 
   return fileIds;
 
@@ -220,13 +217,14 @@ export const insertPosts = async (fileIds: string[]) => {
 
     const title = $("h1 span").text().trim();
 
-    await db.insert(postsTable).values({
-      documentId: id,
-      author,
-      title,
-      tags,
-      createdAt,
-      readTime,
-    });
+    // TODO: Uncomment when documentId is added to postsTable schema
+    // await db.insert(postsTable).values({
+    //   documentId: id,
+    //   author,
+    //   title,
+    //   tags,
+    //   createdAt,
+    //   readTime,
+    // });
   }
 };

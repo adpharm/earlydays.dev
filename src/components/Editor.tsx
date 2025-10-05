@@ -1,15 +1,14 @@
 // Editor.tsx
 
 // Importing core components
-import QuillEditor from "react-quill-new";
 // Importing styles
 import "@/lib/styles.modules.css";
 import "react-quill-new/dist/quill.snow.css";
 import { CustomButton } from "@/components/CustomButton";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import ReactQuill from "react-quill-new";
-import { SelectPost, SelectUser } from "@/db/schema";
-import { Check, LoaderCircle, X } from "lucide-react";
+import type { SelectPost, SelectUser } from "@/db/schema";
+import { Check, LoaderCircle } from "lucide-react";
 import { useDebounce } from "@uidotdev/usehooks";
 import { publishPost } from "@/lib/utils";
 

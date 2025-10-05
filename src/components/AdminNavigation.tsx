@@ -1,5 +1,3 @@
-import { Menu } from "lucide-react";
-import React from "react";
 import { CustomButton } from "./CustomButton";
 
 function logOut() {

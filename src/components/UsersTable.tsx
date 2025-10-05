@@ -1,9 +1,7 @@
-import { ColumnDef } from "@tanstack/react-table";
-import { formatShortDate } from "@/lib/utils";
+import type { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "./DataTable";
-import { SelectUser } from "@/db/schema";
+import type { SelectUser } from "@/db/schema";
 import { Pencil } from "lucide-react";
-import React from "react";
 
 type User = SelectUser;
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogTrigger,
@@ -8,7 +8,6 @@ import {
   DialogDescription,
   DialogHeader,
 } from "./ui/dialog";
-import { CustomButton } from "./CustomButton";
 import { deletePost } from "@/lib/utils";
 
 interface ConfirmDeleteModalProps {
@@ -16,20 +15,16 @@ interface ConfirmDeleteModalProps {
 }
 
 export function ConfirmDeleteModal({ postId }: ConfirmDeleteModalProps) {
-  const [isLoading, setIsLoading] = useState(false);
   const [errorText, setErrorText] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setIsLoading(true);
 
     const response = await deletePost(postId);
 
     console.log(response);
 
-    if ((await response.status) == 200) {
-      setIsLoading(false);
-
+    if (response.status == 200) {
       return (window.location.href = "/admin");
     } else {
       setErrorText(response.toString());

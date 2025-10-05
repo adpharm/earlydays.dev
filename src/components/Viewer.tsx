@@ -1,18 +1,14 @@
 // Importing core components
-import QuillEditor from "react-quill-new";
 // Importing styles
 import "@/lib/styles.modules.css";
 import "react-quill-new/dist/quill.snow.css";
-import { CustomButton } from "@/components/CustomButton";
-import React, { useState } from "react";
 import ReactQuill from "react-quill-new";
-import { SelectPost, SelectUser } from "@/db/schema";
 
 type ViewerProps = {
   content: string;
 };
 
-const Editor: React.FC<ViewerProps> = ({ content }) => {
+const Editor = ({ content }: ViewerProps) => {
   // Editor state
 
   return (

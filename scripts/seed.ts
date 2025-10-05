@@ -2,7 +2,7 @@ import "dotenv/config";
 import { db } from "@/db";
 import { usersTable } from "@/db/schema";
 import * as bcrypt from "bcrypt";
-import { InsertUser } from "@/db/schema";
+import type { InsertUser } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 const developers: InsertUser[] = [

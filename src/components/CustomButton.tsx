@@ -1,5 +1,3 @@
-import React from "react";
-
 type ButtonVariant = "primary" | "dark" | "outline" | "light";
 
 type CustomButtonProps = {

@@ -1,0 +1,40 @@
+---
+import type { SelectPost } from "@/db/schema";
+import Layout from "../_layout.astro";
+import Viewer from "@/components/Viewer";
+import { db } from "@/db";
+import { postsTable } from "@/db/schema";
+import { eq } from "drizzle-orm";
+
+const { docId } = Astro.params;
+
+let post: SelectPost | null | undefined = null;
+let error: string | null = null;
+let loading = true;
+
+try {
+  // Convert docId to a number
+  const postId = Number(docId);
+
+  // Fetch the post directly from the database
+  post = (
+    await db.select().from(postsTable).where(eq(postsTable.id, postId))
+  ).at(0);
+
+  if (!post) {
+    throw new Error("Post not found.");
+  }
+} catch (err) {
+  error = err instanceof Error ? err.message : "Failed to fetch the post.";
+  console.error(err);
+} finally {
+  loading = false;
+}
+---
+
+<Layout>
+  <!-- Insert body -->
+  <div>
+    {post && <Viewer content={post.content || ""} client:only="react" />}
+  </div>
+</Layout>
